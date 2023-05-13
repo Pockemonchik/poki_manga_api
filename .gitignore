@@ -1,0 +1,27 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+**/__pycache__
+db.sqlite3
+media
+*.py[cod] 
+*$py.class
+*.docx
+*.pdf
+*.pyc
+*.log
+# dependencies
+/env
+/media
+log.log
+/services/audio_service/ffmpeg
+/services/audio_service/assa_storage
+/services/audio_service/local_storage
+/services/audio_service/wav_storage
+/services/document_service/blanks
+
+# testing
+/coverage
+
+# production
+/build
+
