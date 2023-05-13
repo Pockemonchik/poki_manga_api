@@ -5,6 +5,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from manga import urls as manga_urls
+
 from rest_framework import permissions
 
 
@@ -29,7 +31,7 @@ urlpatterns = [
     re_path(r'^swagger/$', schema_view.with_ui('swagger',
             cache_timeout=0), name='schema-swagger-ui'),
     re_path('api-auth/', include('rest_framework.urls')),
-    # re_path(r'^api/summary_aoi_ptp/', include(summary_aoi_urls)),
+    re_path(r'^api/manga/', include(manga_urls)),
     
 
 ]

@@ -64,7 +64,7 @@ INSTALLED_APPS = [
 
     'core',
     'applogger',
-
+    'manga',
 
 ]
 
