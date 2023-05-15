@@ -22,25 +22,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
-)
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-
-
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-m(ddoo2t@(j5r615&y$r$(dr9t0@gi@-a9iz@qvfp95k$%x*41'
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG')
+DEBUG = int(os.environ.get("DEBUG", default=0))
 
-OFFLINE_TEST = env.bool('OFFLINE_TEST')
+OFFLINE_TEST = int(os.environ.get("OFFLINE_TEST", default=0))
 # OFFLINE_TEST = False
 
 ALLOWED_HOSTS = ['*']
 
-HOST = env('HOST')
+HOST = os.environ.get('HOST')
 
 # Application definition
 
@@ -191,13 +184,31 @@ GRANT ALL ON schema public TO django;
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# миграции в контейнере ------ docker-compose exec web python manage.py migrate --noinput 
+# проверяем бд --------------- docker-compose exec db psql --username=django --dbname=django_dev
+# ---------------------------- \l ; CTc/django ; \c ; \dt ;  \q;
+# провверяем создание тома --- docker volume inspect  APP_NAME_postgres_data
+
+# для прода надо статику собрать-- docker-compose -f docker-compose.prod.yml exec web python manage.py collectstatic --no-input --clear 
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
+        "USER": os.environ.get("SQL_USER", "user"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -240,7 +251,7 @@ X_FRAME_OPTIONS = 'ALLOWALL'
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+STATIC_ROOT = BASE_DIR / "staticfiles" 
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
